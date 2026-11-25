@@ -1,0 +1,9 @@
+Japanese pronunciation — 大阪旅程
+
+These Japanese speech clips were synthesized using Open JTalk via pyopenjtalk-plus.
+Voice: HTS Voice "Mei", released by the MMDAgent Project Team.
+Copyright © 2009–2013 Nagoya Institute of Technology, Department of Computer Science.
+Voice source: https://github.com/r9y9/pyopenjtalk/tree/master/pyopenjtalk/htsvoice
+Voice license: Creative Commons Attribution 3.0 — https://creativecommons.org/licenses/by/3.0/
+
+The generated speech was set to 0.93× speed, loudness-normalized, and encoded as mono 24 kHz MP3 at 48 kbps.

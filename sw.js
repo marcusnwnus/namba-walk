@@ -1,18 +1,21 @@
 /* Cache only this app's bundled, same-origin resources. */
 const CACHE_PREFIX = 'namba-walk-shell-';
-const CACHE_NAME = `${CACHE_PREFIX}v24`;
+const CACHE_NAME = `${CACHE_PREFIX}v25`;
 const ROOT = new URL('./', self.registration.scope);
+const AUDIO_PATHS = Object.entries({ everyday: 8, transport: 7, food: 9, shopping: 7, hotel: 7, help: 7 })
+  .flatMap(([group, count]) => Array.from({ length: count }, (_, index) => `japanese-audio/${group}-${index + 1}.mp3`));
 const ASSET_PATHS = [
   'index.html', 'style.css', 'app.js', 'storage.js', 'trip-ui.js', 'places.js', 'basemap.js', 'routes.js',
   'day-carousel.css', 'day-map.js', 'day-carousel.js', 'restaurant-ratings.js', 'dining.js', 'stop-food.js',
   'food-directory.css', 'food-directory.js',
   'shopping.css', 'shopping-data.js', 'shopping.js',
-  'japanese.css', 'japanese.js',
+  'japanese.css', 'japanese.js', 'japanese-audio/NOTICE.txt', ...AUDIO_PATHS,
   'favicon.svg', 'dotonbori.jpg', 'vendor/leaflet.js', 'vendor/leaflet.css',
   'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'
 ];
 const ASSET_URLS = ASSET_PATHS.map(path => new URL(path, ROOT).href);
 const ASSET_SET = new Set(ASSET_URLS);
+const AUDIO_SET = new Set(AUDIO_PATHS.map(path => new URL(path, ROOT).href));
 const SHELL_URL = new URL('index.html', ROOT).href;
 const SHELL_PATH = new URL(SHELL_URL).pathname;
 
@@ -44,6 +47,33 @@ async function fetchWithOfflineCopy(request, cacheKey) {
   }
 }
 
+async function serveAudio(request, cacheKey) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(cacheKey);
+  if (!cached) return fetch(request);
+
+  const range = request.headers.get('range')?.match(/^bytes=(\d*)-(\d*)$/i);
+  if (!range || (!range[1] && !range[2])) return cached;
+
+  const body = await cached.blob();
+  const lastByte = body.size - 1;
+  const start = range[1] ? Number(range[1]) : Math.max(0, body.size - Number(range[2]));
+  const end = range[1] && range[2] ? Math.min(lastByte, Number(range[2])) : lastByte;
+  if (start > end) {
+    return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${body.size}` } });
+  }
+
+  return new Response(body.slice(start, end + 1), {
+    status: 206,
+    headers: {
+      'Accept-Ranges': 'bytes',
+      'Content-Range': `bytes ${start}-${end}/${body.size}`,
+      'Content-Length': String(end - start + 1),
+      'Content-Type': 'audio/mpeg'
+    }
+  });
+}
+
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
@@ -56,5 +86,5 @@ self.addEventListener('fetch', event => {
   }
 
   if (!ASSET_SET.has(url.href)) return;
-  event.respondWith(fetchWithOfflineCopy(request, url.href));
+  event.respondWith(AUDIO_SET.has(url.href) ? serveAudio(request, url.href) : fetchWithOfflineCopy(request, url.href));
 });

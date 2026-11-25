@@ -101,7 +101,8 @@
   margin-top: auto;
 }
 
-.japanese-copy-button {
+.japanese-copy-button,
+.japanese-play-button {
   min-width: 44px;
   min-height: 44px;
   padding: 4px 10px;
@@ -113,9 +114,46 @@
   font-weight: 750;
 }
 
-.japanese-copy-button:hover { background: var(--trip-tint); }
+.japanese-copy-button:hover,
+.japanese-play-button:hover { background: var(--trip-tint); }
+
+.japanese-play-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+}
+
+.japanese-play-button .icon { width: 20px; height: 20px; }
+
+.japanese-play-button[aria-pressed="true"] {
+  border-color: var(--trip-accent);
+  background: var(--trip-accent);
+  color: #fff;
+}
+
+.japanese-play-button[aria-pressed="true"] .icon { display: none; }
+
+.japanese-play-button[aria-pressed="true"]::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: currentColor;
+}
 
 .japanese-card-feedback {
   color: var(--trip-accent-deep);
   font-size: .85rem;
+}
+
+.japanese-play-status { margin: 4px 0 0; }
+
+.japanese-play-status:empty {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
 }

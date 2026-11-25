@@ -449,6 +449,7 @@ a { color: inherit; }
 .hotel-access p { margin: 5px 0 10px; color: var(--muted); }
 .hotel-access a { color: var(--trip-accent-deep); font-size: .9rem; font-weight: 700; text-underline-offset: 3px; }
 .hotel-screen .mobile-app-help { margin: 0; }
+.japanese-audio-credit { display: block; margin-top: 16px; color: var(--muted); }
 @media (min-width: 751px) {
   .site-header { position: sticky; z-index: 501; top: 0; }
 }

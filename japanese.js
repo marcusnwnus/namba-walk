@@ -82,18 +82,61 @@
   const groups = phraseGroups.map(({ id, label, phrases }) => ({
     id,
     label,
-    phrases: phrases.map(([japanese, romaji, translation, keywords]) => ({
+    phrases: phrases.map(([japanese, romaji, translation, keywords], index) => ({
       japanese,
       romaji,
       translation,
+      audioSource: `./japanese-audio/${id}-${index + 1}.mp3`,
       searchable: normalize(`${japanese} ${romaji} ${translation} ${keywords}`),
     })),
   }));
 
   let activeCategory = '';
   let lastCopy = 0;
+  let playback;
 
-  const createPhraseCard = ({ japanese, romaji, translation }) => {
+  const stopPlayback = () => {
+    if (!playback) return;
+    const { audio, button } = playback;
+    playback = undefined;
+    button.setAttribute('aria-pressed', 'false');
+    button.title = '播放日文';
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+  };
+
+  const togglePlayback = async (button, source, playbackStatus) => {
+    const wasActive = playback?.button === button;
+    stopPlayback();
+    if (wasActive) return;
+
+    playbackStatus.textContent = '';
+    const audio = new Audio();
+    playback = { audio, button };
+    button.setAttribute('aria-pressed', 'true');
+    button.title = '停止播放';
+
+    const reportFailure = () => {
+      if (playback?.audio !== audio) return;
+      stopPlayback();
+      playbackStatus.textContent = '暫時未能播放，請再試。';
+    };
+
+    audio.addEventListener('ended', () => {
+      if (playback?.audio === audio) stopPlayback();
+    }, { once: true });
+    audio.addEventListener('error', reportFailure, { once: true });
+    audio.src = source;
+
+    try {
+      await audio.play();
+    } catch {
+      reportFailure();
+    }
+  };
+
+  const createPhraseCard = ({ japanese, romaji, translation, audioSource }) => {
     const card = document.createElement('li');
     card.className = 'japanese-card';
 
@@ -113,6 +156,27 @@
 
     const actions = document.createElement('div');
     actions.className = 'japanese-card-actions';
+
+    const audioButton = document.createElement('button');
+    audioButton.className = 'japanese-play-button';
+    audioButton.type = 'button';
+    audioButton.title = '播放日文';
+    audioButton.setAttribute('aria-label', `播放日文「${translation}」`);
+    audioButton.setAttribute('aria-pressed', 'false');
+
+    const svgNamespace = 'http://www.w3.org/2000/svg';
+    const speakerIcon = document.createElementNS(svgNamespace, 'svg');
+    speakerIcon.setAttribute('class', 'icon');
+    speakerIcon.setAttribute('aria-hidden', 'true');
+    const speakerSymbol = document.createElementNS(svgNamespace, 'use');
+    speakerSymbol.setAttribute('href', '#i-speaker');
+    speakerIcon.append(speakerSymbol);
+    audioButton.append(speakerIcon);
+
+    const playbackStatus = document.createElement('p');
+    playbackStatus.className = 'japanese-play-status japanese-card-feedback';
+    playbackStatus.setAttribute('role', 'status');
+    audioButton.addEventListener('click', () => togglePlayback(audioButton, audioSource, playbackStatus));
 
     const copyButton = document.createElement('button');
     copyButton.className = 'japanese-copy-button';
@@ -146,12 +210,13 @@
       copyStatus.textContent = copied ? `已複製日文「${translation}」` : '未能複製。請長按或選取日文複製。';
     });
 
-    actions.append(copyButton, feedback);
-    card.append(phrase, pronunciation, meaning, actions);
+    actions.append(audioButton, copyButton, feedback);
+    card.append(phrase, pronunciation, meaning, actions, playbackStatus);
     return card;
   };
 
   const render = () => {
+    stopPlayback();
     const terms = normalize(search.value).split(/[\p{P}\s]+/u).filter(Boolean);
     let count = 0;
     const sections = [];
@@ -201,8 +266,13 @@
 
   categories.replaceChildren(...buttons);
   search.addEventListener('input', (event) => {
-    if (!event.isComposing) render();
+    if (event.isComposing) stopPlayback();
+    else render();
   });
   search.addEventListener('compositionend', render);
+  document.addEventListener('namba:viewchange', ({ detail: { view } }) => {
+    if (view !== 'japanese') stopPlayback();
+  });
+  window.addEventListener('pagehide', stopPlayback);
   render();
 })();
