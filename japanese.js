@@ -94,6 +94,12 @@
   let activeCategory = '';
   let lastCopy = 0;
   let playback;
+  let playbackRate = 1;
+
+  const applyPlaybackRate = (audio) => {
+    audio.defaultPlaybackRate = playbackRate;
+    audio.playbackRate = playbackRate;
+  };
 
   const stopPlayback = () => {
     if (!playback) return;
@@ -113,6 +119,8 @@
 
     playbackStatus.textContent = '';
     const audio = new Audio();
+    if ('preservesPitch' in audio) audio.preservesPitch = true;
+    else if ('webkitPreservesPitch' in audio) audio.webkitPreservesPitch = true;
     playback = { audio, button };
     button.setAttribute('aria-pressed', 'true');
     button.title = '停止播放';
@@ -128,6 +136,7 @@
     }, { once: true });
     audio.addEventListener('error', reportFailure, { once: true });
     audio.src = source;
+    applyPlaybackRate(audio);
 
     try {
       await audio.play();
@@ -265,6 +274,14 @@
   });
 
   categories.replaceChildren(...buttons);
+  const rateButtons = document.querySelectorAll('#japanese-speed [data-playback-rate]');
+  for (const button of rateButtons) {
+    button.addEventListener('click', () => {
+      playbackRate = Number(button.dataset.playbackRate);
+      for (const control of rateButtons) control.setAttribute('aria-pressed', String(control === button));
+      if (playback) applyPlaybackRate(playback.audio);
+    });
+  }
   search.addEventListener('input', (event) => {
     if (event.isComposing) stopPlayback();
     else render();

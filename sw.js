@@ -1,6 +1,6 @@
 /* Cache only this app's bundled, same-origin resources. */
 const CACHE_PREFIX = 'namba-walk-shell-';
-const CACHE_NAME = `${CACHE_PREFIX}v25`;
+const CACHE_NAME = `${CACHE_PREFIX}v26`;
 const ROOT = new URL('./', self.registration.scope);
 const AUDIO_PATHS = Object.entries({ everyday: 8, transport: 7, food: 9, shopping: 7, hotel: 7, help: 7 })
   .flatMap(([group, count]) => Array.from({ length: count }, (_, index) => `japanese-audio/${group}-${index + 1}.mp3`));

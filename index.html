@@ -756,7 +756,14 @@
         <input id="japanese-search" type="search" placeholder="例如豬肉、月台、すき焼き" autocomplete="off" enterkeyhint="search">
       </label>
       <div id="japanese-categories" class="japanese-categories" role="group" aria-label="句子分類"></div>
-      <p id="japanese-status" role="status"></p>
+      <div class="japanese-toolbar">
+        <div id="japanese-speed" class="japanese-speed" role="group" aria-labelledby="japanese-speed-label">
+          <span id="japanese-speed-label">語速</span>
+          <button class="food-pill" type="button" data-playback-rate="1" aria-pressed="true">正常 1×</button>
+          <button class="food-pill" type="button" data-playback-rate="0.75" aria-pressed="false">慢速 0.75×</button>
+        </div>
+        <p id="japanese-status" role="status"></p>
+      </div>
       <p id="japanese-copy-status" role="status"></p>
       <div id="japanese-phrases"></div>
       <small class="japanese-audio-credit">語音由 <a href="./japanese-audio/NOTICE.txt">HTS Voice Mei</a> 合成。</small>
