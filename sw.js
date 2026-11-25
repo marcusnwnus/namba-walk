@@ -1,12 +1,13 @@
 /* Cache only this app's bundled, same-origin resources. */
 const CACHE_PREFIX = 'namba-walk-shell-';
-const CACHE_NAME = `${CACHE_PREFIX}v22`;
+const CACHE_NAME = `${CACHE_PREFIX}v23`;
 const ROOT = new URL('./', self.registration.scope);
 const ASSET_PATHS = [
   'index.html', 'style.css', 'app.js', 'storage.js', 'trip-ui.js', 'places.js', 'basemap.js', 'routes.js',
   'day-carousel.css', 'day-map.js', 'day-carousel.js', 'restaurant-ratings.js', 'dining.js', 'stop-food.js',
   'food-directory.css', 'food-directory.js',
   'shopping.css', 'shopping-data.js', 'shopping.js',
+  'japanese.css', 'japanese.js',
   'favicon.svg', 'dotonbori.jpg', 'vendor/leaflet.js', 'vendor/leaflet.css',
   'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'
 ];

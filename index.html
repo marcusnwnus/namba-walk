@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="./day-carousel.css">
   <link rel="stylesheet" href="./food-directory.css">
   <link rel="stylesheet" href="./shopping.css">
+  <link rel="stylesheet" href="./japanese.css">
   <script defer src="./vendor/leaflet.js"></script>
   <script defer src="./basemap.js"></script>
   <script defer src="./routes.js"></script>
@@ -28,6 +29,7 @@
   <script defer src="./shopping-data.js"></script>
   <script defer src="./shopping.js"></script>
   <script defer src="./trip-ui.js"></script>
+  <script defer src="./japanese.js"></script>
   <script defer src="./day-map.js"></script>
   <script defer src="./day-carousel.js"></script>
 </head>
@@ -51,6 +53,7 @@
     <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3.5m0 13V22M2 12h3.5m13 0H22"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-phrases" viewBox="0 0 24 24"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-1-2V6a2 2 0 0 1 2-2Z"/><path d="M7 9h10m-10 4h6"/></symbol>
   </svg>
 
   <a class="skip" href="#itinerary">跳至行程</a>
@@ -66,6 +69,7 @@
         <a href="#trip-food" data-view-link="food">食店</a>
         <a href="#trip-shopping" data-view-link="shopping">購物</a>
         <a href="#trip-hotel" data-view-link="hotel">酒店</a>
+        <a href="#trip-japanese" data-view-link="japanese">日語</a>
       </nav>
       <button class="shopping-view-checklist" type="button" aria-controls="shopping-checklist" hidden>查看清單 · 待買 0</button>
     </div>
@@ -738,10 +742,22 @@
       <details id="mobile-app-help" class="mobile-app-help">
       <summary>加入手機主畫面</summary>
       <p>用手機開啟 HTTPS 網址後，iPhone 可在 Safari 分享選單選「加入主畫面」，再開啟「以 Web App 開啟」。Android 可在 Chrome 選單選「安裝並建立捷徑」。</p>
-      <p>請先上網開啟一次。完成離線儲存後，可查看行程、食店、購物資料及難波簡明地圖。詳細底圖、Google 地圖、食評及步行導航須連接網絡。</p>
+      <p>請先上網開啟一次。完成離線儲存後，可查看行程、食店、購物資料、旅遊日語及難波簡明地圖。詳細底圖、Google 地圖、食評及步行導航須連接網絡。</p>
       <p>已選餐廳及購物清單儲喺目前使用嘅 App 或瀏覽器。請用同一個 App 圖示或瀏覽器重開。</p>
-      <p id="offline-ready" role="status" hidden>行程、食店、購物資料及簡明地圖已儲存，可離線查看。</p>
+      <p id="offline-ready" role="status" hidden>行程、食店、購物資料、旅遊日語及簡明地圖已儲存，可離線查看。</p>
     </details>
+    </section>
+
+    <section id="trip-japanese" class="app-screen" data-trip-view="japanese" aria-labelledby="japanese-title" hidden>
+      <div class="section-heading"><h1 id="japanese-title" tabindex="-1">旅遊日語</h1></div>
+      <label class="japanese-search" for="japanese-search">
+        搜尋日語
+        <input id="japanese-search" type="search" placeholder="例如豬肉、月台、すき焼き" autocomplete="off" enterkeyhint="search">
+      </label>
+      <div id="japanese-categories" class="japanese-categories" role="group" aria-label="句子分類"></div>
+      <p id="japanese-status" role="status"></p>
+      <p id="japanese-copy-status" role="status"></p>
+      <div id="japanese-phrases"></div>
     </section>
   </main>
 
@@ -751,6 +767,7 @@
     <a href="#trip-food" data-view-link="food"><svg class="icon" aria-hidden="true"><use href="#i-food"/></svg><span>食店</span></a>
     <a href="#trip-shopping" data-view-link="shopping"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg><span>購物</span></a>
     <a href="#trip-hotel" data-view-link="hotel"><svg class="icon" aria-hidden="true"><use href="#i-hotel"/></svg><span>酒店</span></a>
+    <a href="#trip-japanese" data-view-link="japanese"><svg class="icon" aria-hidden="true"><use href="#i-phrases"/></svg><span>日語</span></a>
   </nav>
 
   <dialog id="place-detail" aria-label="地點詳情">

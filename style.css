@@ -335,7 +335,7 @@ a { color: inherit; }
 .trip-nav { display: none; }
 @media (max-width: 750px), (display-mode: standalone) {
   body { padding-bottom: calc(66px + env(safe-area-inset-bottom)); }
-  .trip-nav { position: fixed; z-index: 550; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 5px max(12px, env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); border-top: 1px solid var(--line); background: var(--paper); box-shadow: 0 -6px 22px #231a1a14; }
+  .trip-nav { position: fixed; z-index: 550; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 5px max(12px, env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); border-top: 1px solid var(--line); background: var(--paper); box-shadow: 0 -6px 22px #231a1a14; }
   .trip-nav a { display: flex; justify-content: center; align-items: center; gap: 7px; min-width: 0; min-height: 49px; padding: 4px; border-radius: 9px; color: var(--muted); font-size: .86rem; font-weight: 750; line-height: 1.2; text-decoration: none; }
   .trip-nav a .icon { width: 21px; height: 21px; }
   .trip-nav a:hover, .trip-nav a[aria-current="page"] { background: var(--trip-tint); color: var(--trip-accent); }
@@ -392,7 +392,7 @@ a { color: inherit; }
 .site-header { padding-top: env(safe-area-inset-top); background: var(--canvas); }
 .header-inner { min-height: 64px; }
 .header-inner .desktop-trip-nav { align-self: center; gap: 6px; }
-.header-inner .desktop-trip-nav a { min-height: 39px; padding: 5px 16px; border-radius: 8px; color: var(--muted); }
+.header-inner .desktop-trip-nav a { min-height: 39px; padding: 5px clamp(8px, 1.5vw, 16px); border-radius: 8px; color: var(--muted); }
 .header-inner .desktop-trip-nav a[aria-current="page"] { background: var(--trip-tint); color: var(--trip-accent); }
 .trip-main { padding-block: 23px 32px; }
 .app-screen:focus, #hero-title:focus, #explore-title:focus, #hotel-title:focus, .itinerary h2:focus { outline: none; }

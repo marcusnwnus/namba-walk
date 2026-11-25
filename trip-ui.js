@@ -11,6 +11,7 @@
     ['#trip-food', { view: 'food' }],
     ['#trip-shopping', { view: 'shopping' }],
     ['#trip-hotel', { view: 'hotel' }],
+    ['#trip-japanese', { view: 'japanese' }],
     ['#hotel-stop', { view: 'hotel' }],
   ]);
   days.forEach((panel, day) => destinations.set(`#${panel.id}`, { view: 'itinerary', day }));
@@ -92,12 +93,6 @@
 
   showDestination(destinationAtLocation() || { view: 'itinerary' });
 
-  const copyButton = document.getElementById('copy-hotel');
-  const hotelName = document.getElementById('hotel-japanese');
-  const hotelAddress = document.getElementById('hotel-address');
-  const copyStatus = document.getElementById('hotel-copy-status');
-  if (!copyButton || !hotelName || !hotelAddress || !copyStatus) return;
-
   const copyWithSelection = (text) => {
     const previousFocus = document.activeElement;
     const field = document.createElement('textarea');
@@ -118,20 +113,29 @@
     }
   };
 
-  copyButton.addEventListener('click', async () => {
-    const text = `${hotelName.textContent.trim()}\n${hotelAddress.textContent.trim()}`;
-    let copied = false;
-    copyStatus.textContent = '';
-
+  const copyText = async (text) => {
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
-        copied = true;
+        return true;
       }
     } catch {
       // The browser may deny clipboard access even when the API is available.
     }
-    if (!copied) copied = copyWithSelection(text);
+    return copyWithSelection(text);
+  };
+  window.NAMBA_COPY_TEXT = copyText;
+
+  const copyButton = document.getElementById('copy-hotel');
+  const hotelName = document.getElementById('hotel-japanese');
+  const hotelAddress = document.getElementById('hotel-address');
+  const copyStatus = document.getElementById('hotel-copy-status');
+  if (!copyButton || !hotelName || !hotelAddress || !copyStatus) return;
+
+  copyButton.addEventListener('click', async () => {
+    const text = `${hotelName.textContent.trim()}\n${hotelAddress.textContent.trim()}`;
+    copyStatus.textContent = '';
+    const copied = await copyText(text);
     copyStatus.textContent = copied ? '已複製酒店名稱及地址' : '請長按複製酒店資料';
   });
 })();
