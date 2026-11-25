@@ -1,15 +1,15 @@
 /* Cache only this app's bundled, same-origin resources. */
 const CACHE_PREFIX = 'namba-walk-shell-';
-const CACHE_NAME = `${CACHE_PREFIX}v26`;
+const CACHE_NAME = `${CACHE_PREFIX}v27`;
 const ROOT = new URL('./', self.registration.scope);
-const AUDIO_PATHS = Object.entries({ everyday: 8, transport: 7, food: 9, shopping: 7, hotel: 7, help: 7 })
-  .flatMap(([group, count]) => Array.from({ length: count }, (_, index) => `japanese-audio/${group}-${index + 1}.mp3`));
+const AUDIO_PATHS = Object.entries({ everyday: 8, short: 24, transport: 7, food: 9, shopping: 7, hotel: 7, help: 7 })
+  .flatMap(([group, count]) => Array.from({ length: count }, (_, index) => `japanese-audio/${group}-${index + 1}.mp3?v=27`));
 const ASSET_PATHS = [
   'index.html', 'style.css', 'app.js', 'storage.js', 'trip-ui.js', 'places.js', 'basemap.js', 'routes.js',
   'day-carousel.css', 'day-map.js', 'day-carousel.js', 'restaurant-ratings.js', 'dining.js', 'stop-food.js',
   'food-directory.css', 'food-directory.js',
   'shopping.css', 'shopping-data.js', 'shopping.js',
-  'japanese.css', 'japanese.js', 'japanese-audio/NOTICE.txt', ...AUDIO_PATHS,
+  'japanese.css?v=27', 'japanese.js?v=27', 'japanese-audio/NOTICE.txt', ...AUDIO_PATHS,
   'favicon.svg', 'dotonbori.jpg', 'vendor/leaflet.js', 'vendor/leaflet.css',
   'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'
 ];
