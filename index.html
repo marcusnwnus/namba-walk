@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="查看嵐酒店約 800 米內的餐廳、便利店、超市及購物地點，並開啟步行路線。">
+  <meta name="theme-color" content="#ffffff">
+  <title>大阪六天遊｜旅程地圖</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="大阪旅程">
+  <link rel="stylesheet" href="./vendor/leaflet.css">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./day-carousel.css">
+  <link rel="stylesheet" href="./food-directory.css">
+  <link rel="stylesheet" href="./shopping.css">
+  <script defer src="./vendor/leaflet.js"></script>
+  <script defer src="./basemap.js"></script>
+  <script defer src="./routes.js"></script>
+  <script defer src="./places.js"></script>
+  <script defer src="./app.js"></script>
+  <script defer src="./storage.js"></script>
+  <script defer src="./restaurant-ratings.js"></script>
+  <script defer src="./dining.js"></script>
+  <script defer src="./stop-food.js"></script>
+  <script defer src="./food-directory.js"></script>
+  <script defer src="./shopping-data.js"></script>
+  <script defer src="./shopping.js"></script>
+  <script defer src="./trip-ui.js"></script>
+  <script defer src="./day-map.js"></script>
+  <script defer src="./day-carousel.js"></script>
+</head>
+<body id="top">
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true">
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 10-8 10S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+    <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="3"/><path d="M5 10h14M12 3v7M8 18l-2 3m10-3 2 3"/><path d="M8.5 14.5h.01m7 0h.01" stroke-width="2.8"/></symbol>
+    <symbol id="i-hotel" viewBox="0 0 24 24"><path d="M5 21V4h14v17M3 21h18M9 8h1M14 8h1M9 12h1M14 12h1M10 21v-5h4v5"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="15" rx="2"/><path d="M8 3v6m8-6v6M4 11h16m-11 5 2 2 4-4"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></symbol>
+    <symbol id="i-food" viewBox="0 0 24 24"><path d="M4 3v6a3 3 0 0 0 6 0V3M7 3v18m10 0V3c-2 2-3 5-3 8v2h3"/></symbol>
+    <symbol id="i-shop" viewBox="0 0 24 24"><path d="M4 11v10h16V11M3 7l2-4h14l2 4v3a2 2 0 0 1-4 0 2.5 2.5 0 0 1-5 0 2.5 2.5 0 0 1-5 0 2 2 0 0 1-4 0V7h18M9 21v-6h6v6"/></symbol>
+    <symbol id="i-basket" viewBox="0 0 24 24"><path d="m3 9 2 10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2l2-10M2 9h20M7 9l4-6m6 6-4-6m-4 10v4m6-4v4"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 7h14l1 14H4L5 7Zm4 3V6a3 3 0 0 1 6 0v4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3.5m0 13V22M2 12h3.5m13 0H22"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+  </svg>
+
+  <a class="skip" href="#itinerary">跳至行程</a>
+  <header class="site-header">
+    <div class="site-width header-inner">
+      <a class="wordmark" href="#itinerary" data-view-link="itinerary" aria-label="大阪旅程，返回行程">
+        <span class="wordmark-icon"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg></span>
+        <strong>大阪旅程</strong>
+      </a>
+      <nav class="desktop-trip-nav" aria-label="主選單">
+        <a href="#itinerary" data-view-link="itinerary">行程</a>
+        <a href="#explore" data-view-link="map">地圖</a>
+        <a href="#trip-food" data-view-link="food">食店</a>
+        <a href="#trip-shopping" data-view-link="shopping">購物</a>
+        <a href="#trip-hotel" data-view-link="hotel">酒店</a>
+      </nav>
+      <button class="shopping-view-checklist" type="button" aria-controls="shopping-checklist" hidden>查看清單 · 待買 0</button>
+    </div>
+  </header>
+
+  <main class="site-width trip-main">
+    <div id="itinerary" class="app-screen" data-trip-view="itinerary">
+      <section class="hero trip-hero" aria-labelledby="hero-title">
+        <!-- Dōtonbori Nightlife 2018 by Benh LIEU SONG, resized and cropped. CC BY-SA 2.0.
+          https://commons.wikimedia.org/wiki/File:D%C5%8Dtonbori_Nightlife_2018_(45140357124).jpg
+          https://creativecommons.org/licenses/by-sa/2.0/ -->
+        <div class="hero-photo"></div>
+        <div class="hero-copy">
+          <p class="hero-location"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>日本大阪</p>
+          <h1 id="hero-title" tabindex="-1">大阪六天遊</h1>
+          <p class="trip-dates"><time datetime="2026-11-28">11 月 28 日</time>至<time datetime="2026-12-03">12 月 3 日</time> · 2026</p>
+        </div>
+        <span class="hero-caption" lang="ja">道頓堀・戎橋</span>
+      </section>
+      <p class="hero-photo-credit">相片 <a href="https://commons.wikimedia.org/wiki/File:D%C5%8Dtonbori_Nightlife_2018_(45140357124).jpg" target="_blank" rel="noopener noreferrer">Dōtonbori Nightlife 2018</a> · Benh LIEU SONG · 已縮放及裁切 · <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="license noopener noreferrer">CC BY-SA 2.0</a></p>
+      <nav id="trip-days" class="trip-day-strip" aria-label="六天行程">
+        <a class="trip-day-link" data-day-link="1" href="#day-1" aria-label="Day 1，11 月 28 日，星期六，已安排">
+          <span>Day 1</span><time datetime="2026-11-28">28/11</time>
+        </a>
+        <a class="trip-day-link" data-day-link="2" href="#day-2" aria-label="Day 2，11 月 29 日，星期日，已安排">
+          <span>Day 2</span><time datetime="2026-11-29">29/11</time>
+        </a>
+        <a class="trip-day-link" data-day-link="3" href="#day-3" aria-label="Day 3，11 月 30 日，星期一，已安排">
+          <span>Day 3</span><time datetime="2026-11-30">30/11</time>
+        </a>
+        <a class="trip-day-link" data-day-link="4" href="#day-4" aria-label="Day 4，12 月 1 日，星期二，已安排">
+          <span>Day 4</span><time datetime="2026-12-01">1/12</time>
+        </a>
+        <a class="trip-day-link" data-day-link="5" href="#day-5" aria-label="Day 5，12 月 2 日，星期三，已安排">
+          <span>Day 5</span><time datetime="2026-12-02">2/12</time>
+        </a>
+        <a class="trip-day-link" data-day-link="6" href="#day-6" aria-label="Day 6，12 月 3 日，星期四，已安排">
+          <span>Day 6</span><time datetime="2026-12-03">3/12</time>
+        </a>
+      </nav>
+    <section id="day-1" class="itinerary" data-trip-day="1" aria-labelledby="day-1-title">
+      <div class="itinerary-header">
+        <div>
+          <h2 id="day-1-title" tabindex="-1">心齋橋及道頓堀</h2>
+          <p>2026 年 11 月 28 日（星期六）。以下均為日本時間，按抵達關西國際機場（KIX）安排。</p>
+          <p class="itinerary-time-note">南海電鐵時間為預定班次，市區行程時間可按抵達酒店時間調整。</p>
+        </div>
+        <div class="itinerary-map-actions">
+          <a class="route-link" href="#explore" data-show-route="day-1">在地圖查看 Day 1 市區路線</a>
+          <a id="day1-walking-route" class="route-link route-link-secondary" href="https://www.google.com/maps/dir/?api=1&amp;origin=%E5%BF%83%E6%96%8E%E6%A9%8BPARCO+%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%BF%83%E6%96%8E%E6%A9%8B%E7%AD%8B1-8-3&amp;destination=%E6%88%8E%E6%A9%8B+%E5%A4%A7%E9%98%AA%E5%B8%82+%E9%81%93%E9%A0%93%E5%A0%80&amp;travelmode=walking&amp;waypoints=%E5%A4%A7%E4%B8%B8%E5%BF%83%E6%96%8E%E6%A9%8B%E5%BA%97+%E6%9C%AC%E9%A4%A8+%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%BF%83%E6%96%8E%E6%A9%8B%E7%AD%8B1-7-1" target="_blank" rel="noopener noreferrer">由 PARCO 步行到戎橋</a>
+        </div>
+      </div>
+      <ol class="itinerary-stops">
+        <li data-map-point="airport:0" data-food-area="kix">
+          <div class="stop-marker"><span>01</span></div>
+          <div class="stop-content"><p class="stop-time">13:25 · 預定抵達</p><h3>關西國際機場（KIX）<span class="ja" lang="ja">関西国際空港</span></h3><p>預留時間辦理入境手續及提取行李。一號客運大樓 2 樓直通車站。由二號客運大樓前往車站，請先搭免費穿梭巴士。</p><a href="https://www.kansai-airport.or.jp/access/from-airport/train" target="_blank" rel="noopener noreferrer">機場鐵路交通</a> · <a href="https://www.kansai-airport.or.jp/access/t2" target="_blank" rel="noopener noreferrer">二號客運大樓穿梭巴士</a></div>
+        </li>
+        <li data-map-point="airport:1" data-food-area="nankai">
+          <div class="stop-marker"><span>02</span></div>
+          <div class="stop-content"><p class="stop-time">約 45–50 分鐘</p><h3>南海空港線 → 南海難波站<span class="ja" lang="ja">南海空港線 → 南海なんば駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-nankai-airport">
+                <div class="rail-leg-header"><span class="rail-line-name rail-nankai-airport">南海空港線 <span class="rail-line-code">紫色</span></span> <span class="rail-line-name rail-nankai-main">南海本線 <span class="rail-line-code">藍色</span></span> <strong class="rail-direction">往 <span lang="ja">なんば</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">関西空港</span> <span class="rail-station-code">NK32</span></span> → <span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">NK01</span></span> <span class="rail-ride-detail">· 1／2 號月台 · <span lang="ja">空港急行</span></span></p>
+              </li>
+            </ul>
+            <p>認住橙色「NANKAI」閘口，入閘後睇電子牌確認月台。空港急行直達難波，毋須訂位。</p><p>星期六空港急行的預定開出及抵達時間為 14:39 → 15:25、14:56 → 15:41、15:09 → 15:55。</p><p>全車指定席特急 Rapi:t 有 14:35 → 15:14 和 15:05 → 15:45，需另購特急券。上車前請查看最新班次。</p><a href="https://kensaku.nankai.co.jp/sp/T5?d=1&amp;dw=1&amp;slCode=311-2" target="_blank" rel="noopener noreferrer">南海周末時間表</a> · <a href="https://www.nankai.co.jp/traffic/railmap.html" target="_blank" rel="noopener noreferrer">南海路線圖</a> · <a href="#explore" data-show-route="airport">在地圖查看機場至酒店</a></div>
+        </li>
+        <li id="hotel-stop" data-map-point="airport:2" data-food-area="hotel">
+          <div class="stop-marker"><span>03</span></div>
+          <div class="stop-content"><p class="stop-time">15:30–16:15 · 預計抵達酒店</p><h3>嵐酒店 難波 No.001<span class="ja" lang="ja">嵐ホテル 難波店 No.001</span></h3><p>Google 地圖估計由南海難波站外步行約 6 分鐘，請另預留出站時間。如提早到達，可先問酒店接待處能否寄存行李。</p><p class="stop-address" lang="ja">大阪市浪速区元町1-1-1</p><a href="https://www.google.com/maps/search/?api=1&amp;query=Arashi+Hotel+Namba+1-1-1+Motomachi+Osaka" target="_blank" rel="noopener noreferrer">在 Google 地圖查看酒店</a> · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E5%8D%97%E6%B5%B7%E3%81%AA%E3%82%93%E3%81%B0%E9%A7%85+%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E9%9B%A3%E6%B3%A25-1-60&amp;destination=Hotel+Arashi+Namba+No.001+%E5%A4%A7%E9%98%AA%E5%B8%82%E6%B5%AA%E9%80%9F%E5%8C%BA%E5%85%83%E7%94%BA1-1-1&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">由南海難波站步行到酒店</a></div>
+        </li>
+        <li data-map-point="day-1:3" data-food-area="shinsaibashi">
+          <div class="stop-marker"><span>04</span></div>
+          <div class="stop-content">
+            <p class="stop-time">16:45–17:30</p>
+            <h3>乘地鐵往心齋橋 PARCO<span class="ja" lang="ja">心斎橋PARCO</span></h3>
+            <p>由酒店步行到大阪 Metro 難波站，跟御堂筋線「M」指示。</p>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">箕面萱野</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> → <span class="rail-station"><span lang="ja">心斎橋</span> <span class="rail-station-code">M19</span></span> <span class="rail-ride-detail">· 2 號月台 · 1 個站</span></p>
+              </li>
+            </ul>
+            <p>心齋橋落車後，跟「<span lang="ja">南改札</span>」指示，出閘可直接入 PARCO 地庫。6 樓有吉卜力、吉伊卡哇等角色商品。</p>
+            <p class="stop-address" lang="ja">大阪市中央区心斎橋筋1-8-3</p>
+            <a href="https://www.google.com/maps/dir/?api=1&amp;origin=Hotel+Arashi+Namba+No.001+%E5%A4%A7%E9%98%AA%E5%B8%82%E6%B5%AA%E9%80%9F%E5%8C%BA%E5%85%83%E7%94%BA1-1-1&amp;destination=%E5%BF%83%E6%96%8E%E6%A9%8BPARCO+%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%BF%83%E6%96%8E%E6%A9%8B%E7%AD%8B1-8-3&amp;travelmode=transit" target="_blank" rel="noopener noreferrer">Google 地圖交通路線</a> · <a href="https://subway.osakametro.co.jp/station_guide/M/m20/index.php" target="_blank" rel="noopener noreferrer">難波站構內圖</a> · <a href="https://shinsaibashi.parco.jp/floor/detail/?f=6f&amp;ft=type1" target="_blank" rel="noopener noreferrer">6 樓樓層指南</a>
+          </div>
+        </li>
+        <li data-map-point="day-1:4" data-food-area="shinsaibashi">
+          <div class="stop-marker"><span>05</span></div>
+          <div class="stop-content"><p class="stop-time">17:30–18:15</p><h3>大丸心齋橋店<span class="ja" lang="ja">大丸心斎橋店</span></h3><p>之後到旁邊的大丸本館，B2 有食品專區。</p><p class="stop-address" lang="ja">大阪市中央区心斎橋筋1-7-1</p><a href="https://www.daimaru.co.jp/shinsaibashi/hours.html" target="_blank" rel="noopener noreferrer">營業時間</a></div>
+        </li>
+        <li data-map-point="day-1:5" data-food-area="dotonbori">
+          <div class="stop-marker"><span>06</span></div>
+          <div class="stop-content"><p class="stop-time">18:30</p><h3>道頓堀・戎橋<span class="ja" lang="ja">道頓堀グリコサイン（戎橋）</span></h3><p>沿心齋橋筋往南走，到戎橋拍固力果招牌。</p>
+            <div class="sign-notice"><strong>招牌翻新提示</strong><p>11 月 28 日仍在預定 12 月開始的翻新工程之前。招牌通常在日落後亮燈，實際亮燈時間或有變動。</p><a href="https://www.glico.com/jp/newscenter/pressrelease/47938/" target="_blank" rel="noopener noreferrer">翻新工程公告</a> · <a href="https://www.glico.com/jp/health/contents/glicosign/" target="_blank" rel="noopener noreferrer">招牌介紹</a></div>
+          </div>
+        </li>
+        <li data-food-area="yakiniku">
+          <div class="stop-marker"><span>07</span></div>
+          <div class="stop-content">
+            <p class="stop-time">19:00–19:30 · 建議晚餐</p>
+            <h3>晚餐待定 · 燒肉候選</h3>
+            <p>影完固力果，可喺戎橋附近食燒肉。</p>
+
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section id="day-2" class="itinerary" data-trip-day="2" aria-labelledby="day-2-title">
+      <div class="itinerary-header"><div><h2 id="day-2-title" tabindex="-1">大阪城、天滿及中之島</h2><p>2026 年 11 月 29 日（星期日）・日本時間</p><p class="itinerary-time-note">以下時間為建議，請按當日交通及步行進度調整。</p></div><a class="route-link" href="#explore" data-show-route="day-2">在地圖查看 Day 2 路線</a></div>
+      <ol class="itinerary-stops">
+        <li data-map-point="day-2:3" data-food-area="castle-west"><div class="stop-marker"><span>01</span></div><div class="stop-content"><p class="stop-time">09:00 · 建議出發</p><h3>乘地鐵前往大阪城</h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">箕面萱野</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> → <span class="rail-station"><span lang="ja">本町</span> <span class="rail-station-code">M18</span></span> <span class="rail-ride-detail">· 2 號月台</span></p>
+              </li>
+              <li class="rail-leg rail-metro-c">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-c">中央線 <span class="rail-line-code">C・綠色</span></span> <strong class="rail-direction">往 <span lang="ja">森ノ宮・長田・学研奈良登美ヶ丘</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">本町</span> <span class="rail-station-code">C16</span></span> → <span class="rail-station"><span lang="ja">谷町四丁目</span> <span class="rail-station-code">C18</span></span> <span class="rail-ride-detail">· 1 號月台</span></p>
+              </li>
+            </ul>
+            <p>到本町轉中央線。谷町四丁目落車後，由 9 號出口步行往大手門及天守閣。</p><a href="https://subway.osakametro.co.jp/station_guide/index.php" target="_blank" rel="noopener noreferrer">Osaka Metro 路線圖</a> · <a href="https://subway.osakametro.co.jp/station_guide/boarding.php" target="_blank" rel="noopener noreferrer">月台方向</a></div></li>
+        <li data-map-point="day-2:5" data-food-area="castle"><div class="stop-marker"><span>02</span></div><div class="stop-content"><h3>大阪城天守閣</h3><p>參觀天守閣及大阪城公園。天守閣 09:00 開放，最後入館時間為 17:30；實際安排請查看官方資料。</p><p class="stop-address" lang="ja">大阪市中央区大阪城1-1</p><a href="https://www.osakacastle.net/guide/" target="_blank" rel="noopener noreferrer">參觀指南</a> · <a href="https://www.osakacastle.net/access/" target="_blank" rel="noopener noreferrer">交通資料</a></div></li>
+        <li data-map-point="day-2:8" data-food-area="tenma"><div class="stop-marker"><span>03</span></div><div class="stop-content"><p class="stop-time">12:15–13:00 · 建議午餐</p><h3>天神橋筋商店街・雙月<span class="ja" lang="ja">お好み焼・焼そば 双月</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-t">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-t">谷町線 <span class="rail-line-code">T・紫色</span></span> <strong class="rail-direction">往 <span lang="ja">東梅田・都島・大日</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">谷町四丁目</span> <span class="rail-station-code">T23</span></span> → <span class="rail-station"><span lang="ja">天神橋筋六丁目</span> <span class="rail-station-code">T18</span></span> <span class="rail-ride-detail">· 2 號月台</span></p>
+              </li>
+            </ul>
+            <p>返回谷町四丁目搭車。天神橋筋六丁目落車後，沿商店街向南步行到雙月。營業安排請以店舖確認為準。</p><p class="stop-address" lang="ja">大阪市北区天神橋3-9-9</p><a href="https://tenjin3.com/shop/%E3%81%8A%E5%A5%BD%E3%81%BF%E7%84%BC%E3%80%80%E7%84%BC%E3%81%9D%E3%81%B0%E3%80%80%E5%8F%8C%E6%9C%88/" target="_blank" rel="noopener noreferrer">商店街店舖資料</a></div></li>
+        <li data-map-point="day-2:9" data-food-area="tenmangu"><div class="stop-marker"><span>04</span></div><div class="stop-content"><p class="stop-time">13:30</p><h3>大阪天滿宮<span class="ja" lang="ja">大阪天満宮</span></h3><p>沿商店街繼續南行至天滿宮。參拜後步行過天神橋。</p><p class="stop-address" lang="ja">大阪市北区天神橋2-1-8</p><a href="https://osakatemmangu.or.jp/access" target="_blank" rel="noopener noreferrer">交通資料</a></div></li>
+        <li data-map-point="day-2:11" data-food-area="rose-garden"><div class="stop-marker"><span>05</span></div><div class="stop-content"><p class="stop-time">14:15</p><h3>中之島公園</h3><p>由天神橋進入公園東端，沿河向西走，經玫瑰園（<span lang="ja">バラ園</span>）到中央公會堂。</p></div></li>
+        <li data-map-point="day-2:12" data-food-area="hall"><div class="stop-marker"><span>06</span></div><div class="stop-content"><p class="stop-time">約 15:00</p><h3>大阪市中央公會堂<span class="ja" lang="ja">大阪市中央公会堂</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">なかもず</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">M17</span></span> → <span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> <span class="rail-ride-detail">· 1 號月台</span></p>
+              </li>
+            </ul>
+            <p>參觀公會堂後，步行到淀屋橋站 1 號出入口。</p><p class="stop-address" lang="ja">大阪市北区中之島1-1-27</p><a href="https://osaka-chuokokaido.com/ja/access" target="_blank" rel="noopener noreferrer">交通資料</a></div></li>
+        <li data-map-point="day-2:15" data-food-area="hozenji"><div class="stop-marker"><span>07</span></div><div class="stop-content"><p class="stop-time">約 18:00</p><h3>法善寺橫丁<span class="ja" lang="ja">法善寺横丁</span></h3><p>從難波站步行到橫丁，逛逛小巷。</p></div></li>
+        <li data-map-point="day-2:16" data-food-area="hozenji"><div class="stop-marker"><span>08</span></div><div class="stop-content"><p class="stop-time">18:30 · 建議晚餐</p><h3>法善寺山かづ<span class="ja" lang="ja">地焼うなぎ 法善寺山かづ</span></h3><p>橫丁內的關西式烤鰻魚店。建議先訂位，時間及座位以店舖確認為準。</p><p class="stop-address" lang="ja">大阪市中央区難波1-1-16</p><a href="https://www.tablecheck.com/ja/shops/hozenji-yamakazu/reserve" target="_blank" rel="noopener noreferrer">店舖訂位頁面</a></div></li>
+        <li data-map-point="day-2:17" data-food-area="parks"><div class="stop-marker"><span>09</span></div><div class="stop-content"><p class="stop-time">20:00 · 建議前往</p><h3>難波公園商場<span class="ja" lang="ja">なんばパークス</span></h3><p>步行到商場的屋頂花園散步；花園一般開放至 24:00，請以官方最新安排為準。可欣賞免費的難波光旅（<span lang="ja">なんば光旅</span>）燈飾，包括「<span lang="ja">光の滝</span>」；活動於 2026 年 11 月 13 日至 2027 年 2 月 14 日舉行，一般亮燈時間為 17:00–24:00。</p><p class="stop-address" lang="ja">大阪市浪速区難波中2-10-70</p><a href="https://nambaparks.com/garden" target="_blank" rel="noopener noreferrer">屋頂花園資料</a> · <a href="https://www.nankai.co.jp/news/261030.html" target="_blank" rel="noopener noreferrer">燈飾活動資料</a></div></li>
+        <li data-map-point="day-2:18" data-food-area="hotel"><div class="stop-marker"><span>10</span></div><div class="stop-content"><h3>步行返回嵐酒店</h3><p class="stop-address" lang="ja">大阪市浪速区元町1-1-1</p></div></li>
+      </ol>
+      <div class="day2-routes"><a id="day2-afternoon-route" class="route-link" href="https://www.google.com/maps/dir/?api=1&amp;origin=%E3%81%8A%E5%A5%BD%E3%81%BF%E7%84%BC%E3%83%BB%E7%84%BC%E3%81%9D%E3%81%B0+%E5%8F%8C%E6%9C%88+%E5%A4%A7%E9%98%AA%E5%B8%82%E5%8C%97%E5%8C%BA%E5%A4%A9%E7%A5%9E%E6%A9%8B3-9-9&amp;destination=%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%85%AC%E4%BC%9A%E5%A0%82+%E5%A4%A7%E9%98%AA%E5%B8%82%E5%8C%97%E5%8C%BA%E4%B8%AD%E4%B9%8B%E5%B3%B61-1-27&amp;waypoints=%E5%A4%A7%E9%98%AA%E5%A4%A9%E6%BA%80%E5%AE%AE+%E5%A4%A7%E9%98%AA%E5%B8%82%E5%8C%97%E5%8C%BA%E5%A4%A9%E7%A5%9E%E6%A9%8B2-1-8%7C%E4%B8%AD%E4%B9%8B%E5%B3%B6%E5%85%AC%E5%9C%92+%E3%83%90%E3%83%A9%E5%9C%92+%E5%A4%A7%E9%98%AA%E5%B8%82%E5%8C%97%E5%8C%BA%E4%B8%AD%E4%B9%8B%E5%B3%B61&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">由雙月步行至公會堂</a><a id="day2-evening-route" class="route-link" href="https://www.google.com/maps/dir/?api=1&amp;origin=%E6%B3%95%E5%96%84%E5%AF%BA%E6%A8%AA%E4%B8%81+%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E9%9B%A3%E6%B3%A21&amp;destination=Hotel+Arashi+Namba+No.001+%E5%A4%A7%E9%98%AA%E5%B8%82%E6%B5%AA%E9%80%9F%E5%8C%BA%E5%85%83%E7%94%BA1-1-1&amp;waypoints=%E5%9C%B0%E7%84%BC%E3%81%86%E3%81%AA%E3%81%8E+%E6%B3%95%E5%96%84%E5%AF%BA%E5%B1%B1%E3%81%8B%E3%81%A5+%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E9%9B%A3%E6%B3%A21-1-16%7C%E3%81%AA%E3%82%93%E3%81%B0%E3%83%91%E3%83%BC%E3%82%AF%E3%82%B9+%E5%A4%A7%E9%98%AA%E5%B8%82%E6%B5%AA%E9%80%9F%E5%8C%BA%E9%9B%A3%E6%B3%A2%E4%B8%AD2-10-70&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">由法善寺步行至酒店</a></div>
+    </section>
+
+      <section id="day-3" class="itinerary" data-trip-day="3" aria-labelledby="day-3-title" hidden>
+        <div class="itinerary-header">
+          <div><h2 id="day-3-title" tabindex="-1">梅田購物及美食</h2><p>2026 年 11 月 30 日（星期一） · 日本時間</p><p class="itinerary-time-note">以下為建議時段，請按當日交通調整。</p></div>
+          <div class="itinerary-map-actions"><a class="route-link" href="#explore" data-show-route="day-3">在地圖查看 Day 3 路線</a></div>
+        </div>
+        <ol class="itinerary-stops">
+        <li data-map-point="day-3:2" data-food-area="umeda-east">
+          <div class="stop-marker"><span>01</span></div>
+          <div class="stop-content">
+            <p class="stop-time">上午</p>
+            <h3>難波乘地鐵到梅田<span class="ja" lang="ja">Osaka Metro 梅田駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">箕面萱野</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> → <span class="rail-station"><span lang="ja">梅田</span> <span class="rail-station-code">M16</span></span> <span class="rail-ride-detail">· 2 號月台</span></p>
+              </li>
+            </ul>
+            <p>往阪急三番街可跟 1、2 號出口指示。往 JR 大阪站及 LUCUA 可走 3A。</p>
+            <a href="https://subway.osakametro.co.jp/station_guide/M/m16/map.php" target="_blank" rel="noopener noreferrer">梅田站出口圖</a>
+          </div>
+        </li>
+        <li data-map-point="day-3:4" data-food-area="osaka-station">
+          <div class="stop-marker"><span>02</span></div>
+          <div class="stop-content">
+            <p class="stop-time">11:00</p>
+            <h3>大阪站及 KITTE 大阪<span class="ja" lang="ja">KITTE大阪</span></h3>
+            <p>先到 KITTE 大阪 2 樓買日本各地手信，再到大阪站北面的 LUCUA 及 Grand Front Osaka。</p>
+            <p class="stop-address" lang="ja">大阪市北区梅田3-2-2</p><a href="https://osaka.jp-kitte.jp/shop/floor.jsp?fid=2f" target="_blank" rel="noopener noreferrer">KITTE 大阪樓層指南</a>
+          </div>
+        </li>
+        <li data-food-area="umeda-dining">
+          <div class="stop-marker"><span>03</span></div>
+          <div class="stop-content">
+            <p class="stop-time">午餐或晚餐</p>
+            <h3>在梅田食壽喜燒<span class="ja" lang="ja">すき焼き</span></h3>
+            <p>想食豬肉壽喜燒，可揀萬野一人鍋或しゃぶ菜放題。Fujio 亦有一人鍋，想食和牛套餐可揀 Moritaya。</p>
+
+          </div>
+        </li>
+        <li data-map-point="day-3:6" data-food-area="umeda-north">
+          <div class="stop-marker"><span>04</span></div>
+          <div class="stop-content">
+            <p class="stop-time">下午</p>
+            <h3>Grand Front Osaka 及梅北公園<span class="ja" lang="ja">グランフロント大阪・うめきた公園</span></h3>
+            <p>由大阪站北面過去，逛完商場可以沿梅北公園步行往梅田藍天大廈。</p>
+            <a href="https://umekita.com/midori/" target="_blank" rel="noopener noreferrer">梅北公園資料</a>
+          </div>
+        </li>
+        <li data-map-point="day-3:7" data-food-area="sky-building">
+          <div class="stop-marker"><span>05</span></div>
+          <div class="stop-content">
+            <p class="stop-time">約 16:15 到達</p>
+            <h3>梅田藍天大廈<span class="ja" lang="ja">梅田スカイビル 空中庭園展望台</span></h3>
+            <p>11 月 30 日大阪日落約 16:47，想睇日落可提早入場。同日地下廣場有免費聖誕燈光表演，18:00 起每逢正點及半點播放，最後一場 21:30。</p>
+            <p class="stop-address" lang="ja">大阪市北区大淀中1-1-88</p><a href="https://www.skybldg.co.jp/observatory/information/" target="_blank" rel="noopener noreferrer">展望台資料</a> · <a href="https://www.skybldg.co.jp/event/xmas/01.html" target="_blank" rel="noopener noreferrer">11 月 30 日燈光表演</a> · <a href="https://eco.mtk.nao.ac.jp/koyomi/dni/2026/s2811.html" target="_blank" rel="noopener noreferrer">大阪日落時間</a>
+          </div>
+        </li>
+        <li data-map-point="day-3:10" data-food-area="hotel">
+          <div class="stop-marker"><span>06</span></div>
+          <div class="stop-content">
+            <p class="stop-time">晚餐後</p>
+            <h3>梅田乘地鐵返酒店</h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">なかもず</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">梅田</span> <span class="rail-station-code">M16</span></span> → <span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> <span class="rail-ride-detail">· 1 號月台</span></p>
+              </li>
+            </ul>
+            <p>由梅田站搭車，難波落車後步行返酒店。</p>
+          </div>
+        </li>
+        </ol>
+
+      </section>
+      <section id="day-4" class="itinerary" data-trip-day="4" aria-labelledby="day-4-title" hidden>
+        <div class="itinerary-header">
+          <div><h2 id="day-4-title" tabindex="-1">京都東山、清水寺及鴨川</h2><p>2026 年 12 月 1 日（星期二） · 日本時間</p><p class="itinerary-time-note">以下為建議時段，請按當日交通調整。</p></div>
+          <div class="itinerary-map-actions"><a class="route-link" href="#explore" data-show-route="day-4">在地圖查看 Day 4 路線</a></div>
+        </div>
+        <ol class="itinerary-stops">
+        <li data-map-point="day-4:3" data-food-area="gion">
+          <div class="stop-marker"><span>01</span></div>
+          <div class="stop-content">
+            <p class="stop-time">08:30 出發</p>
+            <h3>難波經淀屋橋去祇園四條<span class="ja" lang="ja">京阪本線 祇園四条駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">箕面萱野</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> → <span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">M17</span></span> <span class="rail-ride-detail">· 2 號月台</span></p>
+              </li>
+              <li class="rail-leg rail-keihan-main">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-main">京阪本線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">出町柳</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">KH01</span></span> → <span class="rail-station"><span lang="ja">祇園四条</span> <span class="rail-station-code">KH39</span></span> <span class="rail-ride-detail">· <span lang="ja">特急</span></span></p>
+              </li>
+            </ul>
+            <p>到淀屋橋後，跟「京阪電車」指示轉車。</p>
+            <a href="https://www.keihan.co.jp/traffic/time-fare/time.html" target="_blank" rel="noopener noreferrer">京阪時間表</a> · <a href="https://www.keihan.co.jp/travel/tw/pdf/trains/passes-for-visitors-to-japan/Validarea_OsakaSubway.pdf" target="_blank" rel="noopener noreferrer">京阪及地鐵路線圖</a> · <a href="https://www.keihan.co.jp/traffic/station/162/info.html" target="_blank" rel="noopener noreferrer">祇園四條站</a>
+          </div>
+        </li>
+        <li data-map-point="day-4:5" data-food-area="kiyomizumichi">
+          <div class="stop-marker"><span>02</span></div>
+          <div class="stop-content">
+            <p class="stop-time">到京都後</p>
+            <h3>轉市巴士 207 到清水道<span class="ja" lang="ja">四条京阪前 → 清水道</span></h3>
+            <p>在四條京阪前（<span lang="ja">四条京阪前</span>）由 A 站牌搭往「<span lang="ja">清水寺・東福寺</span>」的 207 號市巴士，到清水道（<span lang="ja">清水道</span>）落車。之後上斜步行約 10 分鐘到清水寺。</p>
+            <a href="https://www2.city.kyoto.lg.jp/kotsu/busdia/hyperdia/12810007.htm" target="_blank" rel="noopener noreferrer">207 號巴士時間表</a> · <a href="https://www.kiyomizudera.or.jp/access/" target="_blank" rel="noopener noreferrer">清水寺交通安排</a>
+          </div>
+        </li>
+        <li data-map-point="day-4:6" data-food-area="kiyomizu">
+          <div class="stop-marker"><span>03</span></div>
+          <div class="stop-content">
+            <p class="stop-time">約 10:30</p>
+            <h3>清水寺</h3>
+            <p>先參觀清水舞台。12 月 1 日寺方列出開放時間為 06:00–18:00。</p>
+            <p class="stop-address" lang="ja">京都市東山区清水1丁目294</p><a href="https://www.kiyomizudera.or.jp/news/open-hour.php" target="_blank" rel="noopener noreferrer">清水寺開放時間</a>
+          </div>
+        </li>
+        <li data-map-point="day-4:8" data-food-area="ninenzaka">
+          <div class="stop-marker"><span>04</span></div>
+          <div class="stop-content">
+            <p class="stop-time">中午至下午</p>
+            <h3>三年坂、二年坂及八坂神社<span class="ja" lang="ja">産寧坂・二寧坂・八坂神社</span></h3>
+            <p>由清水寺落斜，先到三年坂，再行二年坂。可在東山一帶食午餐，再經寧寧之道（<span lang="ja">ねねの道</span>）到八坂神社。石級遇雨較滑，預留步行時間。</p>
+            <a href="https://ja.kyoto.travel/area/area06.php" target="_blank" rel="noopener noreferrer">京都東山地區指南</a> · <a href="https://www.yasaka-jinja.or.jp/access/" target="_blank" rel="noopener noreferrer">八坂神社交通</a> · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E6%B8%85%E6%B0%B4%E5%AF%BA+%E4%BA%AC%E9%83%BD%E5%B8%82%E6%9D%B1%E5%B1%B1%E5%8C%BA%E6%B8%85%E6%B0%B41%E4%B8%81%E7%9B%AE294&amp;destination=%E4%BA%AC%E9%98%AA+%E7%A5%87%E5%9C%92%E5%9B%9B%E6%9D%A1%E9%A7%85+%E4%BA%AC%E9%83%BD&amp;travelmode=walking&amp;waypoints=%E7%94%A3%E5%AF%A7%E5%9D%82+%E4%BA%AC%E9%83%BD%7C%E4%BA%8C%E5%AF%A7%E5%9D%82+%E4%BA%AC%E9%83%BD%7C%E5%85%AB%E5%9D%82%E7%A5%9E%E7%A4%BE+%E4%BA%AC%E9%83%BD%E5%B8%82%E6%9D%B1%E5%B1%B1%E5%8C%BA" target="_blank" rel="noopener noreferrer">Google 地圖步行路線</a>
+          </div>
+        </li>
+        <li data-map-point="day-4:10" data-food-area="gion">
+          <div class="stop-marker"><span>05</span></div>
+          <div class="stop-content">
+            <p class="stop-time">約 15:00</p>
+            <h3>祇園及鴨川<span class="ja" lang="ja">祇園・鴨川・四条大橋</span></h3>
+            <p>由八坂神社沿四條通行到四條大橋，在鴨川河邊散步，之後返橋東的京阪祇園四條站。</p>
+            
+          </div>
+        </li>
+        <li data-map-point="day-4:14" data-food-area="hotel">
+          <div class="stop-marker"><span>06</span></div>
+          <div class="stop-content">
+            <p class="stop-time">約 16:30–17:00 回程</p>
+            <h3>祇園四條返難波酒店<span class="ja" lang="ja">祇園四条駅 → 淀屋橋駅 → なんば駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-keihan-main">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-main">京阪本線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">淀屋橋</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">祇園四条</span> <span class="rail-station-code">KH39</span></span> → <span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">KH01</span></span> <span class="rail-ride-detail">· 2 號月台 · <span lang="ja">特急</span></span></p>
+              </li>
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">なかもず</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">M17</span></span> → <span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> <span class="rail-ride-detail">· 1 號月台</span></p>
+              </li>
+            </ul>
+            <p>京阪月台指示寫「<span lang="ja">淀屋橋・中之島方面</span>」，睇電子牌選開往淀屋橋的班次。</p>
+            <a href="https://www.keihan.co.jp/traffic/time-fare/time.html" target="_blank" rel="noopener noreferrer">京阪回程時間表</a>
+          </div>
+        </li>
+        </ol>
+
+      </section>
+      <section id="day-5" class="itinerary" data-trip-day="5" aria-labelledby="day-5-title" hidden>
+        <div class="itinerary-header">
+          <div><h2 id="day-5-title" tabindex="-1">伏見稻荷及宇治</h2><p>2026 年 12 月 2 日（星期三） · 日本時間</p><p class="itinerary-time-note">以下為建議時段，請按當日交通調整。</p></div>
+          <div class="itinerary-map-actions"><a class="route-link" href="#explore" data-show-route="day-5">在地圖查看 Day 5 路線</a></div>
+        </div>
+        <ol class="itinerary-stops">
+        <li data-map-point="day-5:4" data-food-area="inari">
+          <div class="stop-marker"><span>01</span></div>
+          <div class="stop-content">
+            <p class="stop-time">08:00 出發</p>
+            <h3>難波經淀屋橋到伏見稻荷<span class="ja" lang="ja">京阪 伏見稲荷駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">箕面萱野</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> → <span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">M17</span></span> <span class="rail-ride-detail">· 2 號月台</span></p>
+              </li>
+              <li class="rail-leg rail-keihan-main">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-main">京阪本線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">出町柳</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">KH01</span></span> → <span class="rail-station"><span lang="ja">丹波橋</span> <span class="rail-station-code">KH30</span></span> <span class="rail-ride-detail">· <span lang="ja">特急</span></span></p>
+              </li>
+              <li class="rail-leg rail-keihan-main">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-main">京阪本線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">三条・出町柳</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">丹波橋</span> <span class="rail-station-code">KH30</span></span> → <span class="rail-station"><span lang="ja">伏見稲荷</span> <span class="rail-station-code">KH34</span></span> <span class="rail-ride-detail">· 1／2 號月台 · <span lang="ja">準急／普通</span></span></p>
+              </li>
+            </ul>
+            <p>在丹波橋轉車時，睇車種「<span lang="ja">準急</span>」或「<span lang="ja">普通</span>」。特急會跳過伏見稻荷站。</p>
+            <a href="https://www.keihan.co.jp/traffic/time-fare/time.html" target="_blank" rel="noopener noreferrer">京阪時間表</a> · <a href="https://www.keihan.co.jp/traffic/station/noriba/" target="_blank" rel="noopener noreferrer">京阪月台方向</a> · <a href="https://inari.jp/access/" target="_blank" rel="noopener noreferrer">伏見稻荷交通</a>
+          </div>
+        </li>
+        <li data-map-point="day-5:7" data-food-area="inari">
+          <div class="stop-marker"><span>02</span></div>
+          <div class="stop-content">
+            <p class="stop-time">約 09:15</p>
+            <h3>伏見稻荷大社及千本鳥居<span class="ja" lang="ja">伏見稲荷大社・千本鳥居・奥社奉拝所</span></h3>
+            <p>由京阪伏見稻荷站向東行約 5 分鐘到神社。先到本殿參拜，再行過千本鳥居到奧社奉拜所（<span lang="ja">奥社奉拝所</span>），在這裏可試舉「<span lang="ja">おもかる石</span>」。在奉拜所折返，可留多些時間畀宇治。</p>
+            <a href="https://inari.jp/sp/map/spot_08/" target="_blank" rel="noopener noreferrer">奧社奉拜所資料</a>
+          </div>
+        </li>
+        <li data-map-point="day-5:10" data-food-area="uji-station">
+          <div class="stop-marker"><span>03</span></div>
+          <div class="stop-content">
+            <p class="stop-time">近中午</p>
+            <h3>由伏見稻荷去宇治<span class="ja" lang="ja">伏見稲荷駅 → 中書島駅 → 宇治駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-keihan-main">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-main">京阪本線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">淀屋橋・中之島</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">伏見稲荷</span> <span class="rail-station-code">KH34</span></span> → <span class="rail-station"><span lang="ja">中書島</span> <span class="rail-station-code">KH28</span></span> <span class="rail-ride-detail">· 2 號月台 · <span lang="ja">準急／普通</span></span></p>
+              </li>
+              <li class="rail-leg rail-keihan-uji">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-uji">京阪宇治線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">宇治</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">中書島</span> <span class="rail-station-code">KH28</span></span> → <span class="rail-station"><span lang="ja">宇治</span> <span class="rail-station-code">KH77</span></span> <span class="rail-ride-detail">· 3／4 號月台</span></p>
+              </li>
+            </ul>
+            <a href="https://www.keihan.co.jp/traffic/station/130/info.html" target="_blank" rel="noopener noreferrer">中書島轉車資料</a>
+          </div>
+        </li>
+        <li data-map-point="day-5:11" data-food-area="uji-east">
+          <div class="stop-marker"><span>04</span></div>
+          <div class="stop-content">
+            <p class="stop-time">午餐</p>
+            <h3>伊藤久右衛門 宇治本店<span class="ja" lang="ja">伊藤久右衛門 宇治本店・茶房</span></h3>
+            <p>由京阪宇治站步行約 5 分鐘，可食抹茶蕎麥麵及抹茶甜品。</p><p class="stop-address" lang="ja">京都府宇治市莵道荒槇19-3</p>
+            <a href="https://www.itohkyuemon.co.jp/corporate/shop/uji/" target="_blank" rel="noopener noreferrer">宇治本店及茶房資料</a>
+          </div>
+        </li>
+        <li data-map-point="day-5:13" data-food-area="uji">
+          <div class="stop-marker"><span>05</span></div>
+          <div class="stop-content">
+            <p class="stop-time">約 13:30</p>
+            <h3>宇治橋、平等院及抹茶街<span class="ja" lang="ja">宇治橋・平等院・平等院表参道</span></h3>
+            <p>過宇治橋後沿表參道到平等院。庭園 17:30 關門，最後入場 17:15。鳳凰堂內部參觀須即日另取入場券，名額有限。離開後可在表參道買茶做手信。12 月 2 日茶房藤花休息，鳳翔館有部分文物展區暫停開放。</p><p class="stop-address" lang="ja">京都府宇治市宇治蓮華116</p>
+            <a href="https://www.byodoin.or.jp/guide/" target="_blank" rel="noopener noreferrer">平等院參觀安排</a> · <a href="https://www.byodoin.or.jp/ch2/news/cat23/2022-1/" target="_blank" rel="noopener noreferrer">賞楓期開放安排</a> · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E4%BA%AC%E9%98%AA%E5%AE%87%E6%B2%BB%E9%A7%85+%E4%BA%AC%E9%83%BD%E5%BA%9C%E5%AE%87%E6%B2%BB%E5%B8%82&amp;destination=%E5%B9%B3%E7%AD%89%E9%99%A2+%E4%BA%AC%E9%83%BD%E5%BA%9C%E5%AE%87%E6%B2%BB%E5%B8%82%E5%AE%87%E6%B2%BB%E8%93%AE%E8%8F%AF116&amp;travelmode=walking&amp;waypoints=%E5%AE%87%E6%B2%BB%E6%A9%8B+%E4%BA%AC%E9%83%BD%E5%BA%9C%E5%AE%87%E6%B2%BB%E5%B8%82%7C%E5%B9%B3%E7%AD%89%E9%99%A2%E8%A1%A8%E5%8F%82%E9%81%93+%E4%BA%AC%E9%83%BD%E5%BA%9C%E5%AE%87%E6%B2%BB%E5%B8%82" target="_blank" rel="noopener noreferrer">由京阪宇治站步行至平等院</a>
+          </div>
+        </li>
+        <li data-map-point="day-5:18" data-food-area="hotel">
+          <div class="stop-marker"><span>06</span></div>
+          <div class="stop-content">
+            <p class="stop-time">約 16:00–16:30 回程</p>
+            <h3>宇治返難波酒店<span class="ja" lang="ja">宇治駅 → 中書島駅 → 淀屋橋駅 → なんば駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-keihan-uji">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-uji">京阪宇治線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">中書島</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">宇治</span> <span class="rail-station-code">KH77</span></span> → <span class="rail-station"><span lang="ja">中書島</span> <span class="rail-station-code">KH28</span></span> <span class="rail-ride-detail">· 1／2 號月台</span></p>
+              </li>
+              <li class="rail-leg rail-keihan-main">
+                <div class="rail-leg-header"><span class="rail-line-name rail-keihan-main">京阪本線 <span class="rail-line-code">KH・深藍色</span></span> <strong class="rail-direction">往 <span lang="ja">淀屋橋</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">中書島</span> <span class="rail-station-code">KH28</span></span> → <span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">KH01</span></span> <span class="rail-ride-detail">· 2 號月台 · <span lang="ja">特急</span></span></p>
+              </li>
+              <li class="rail-leg rail-metro-m">
+                <div class="rail-leg-header"><span class="rail-line-name rail-metro-m">御堂筋線 <span class="rail-line-code">M・紅色</span></span> <strong class="rail-direction">往 <span lang="ja">なかもず</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">淀屋橋</span> <span class="rail-station-code">M17</span></span> → <span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">M20</span></span> <span class="rail-ride-detail">· 1 號月台</span></p>
+              </li>
+            </ul>
+            <p>在中書島選開往淀屋橋的班次。難波落車後步行返酒店。</p>
+            <a href="https://www.keihan.co.jp/traffic/time-fare/time.html" target="_blank" rel="noopener noreferrer">京阪回程時間表</a>
+          </div>
+        </li>
+        </ol>
+
+      </section>
+      <section id="day-6" class="itinerary" data-trip-day="6" aria-labelledby="day-6-title" hidden>
+        <div class="itinerary-header">
+          <div><h2 id="day-6-title" tabindex="-1">日本橋及離港</h2><p>2026 年 12 月 3 日（星期四） · 日本時間</p><p class="itinerary-time-note">以下為建議時段，請按當日交通調整。</p></div>
+          <div class="itinerary-map-actions"><a class="route-link" href="#explore" data-show-route="day-6">在地圖查看 Day 6 路線</a><a class="route-link route-link-secondary" href="#explore" data-show-route="airport-back">查看離港接駁</a></div>
+        </div>
+        <ol class="itinerary-stops">
+        <li data-map-point="day-6:0" data-food-area="hotel">
+          <div class="stop-marker"><span>01</span></div>
+          <div class="stop-content">
+            <p class="stop-time">上午</p>
+            <h3>退房及寄存行李<span class="ja" lang="ja">嵐ホテル 難波店 No.001</span></h3>
+            <p>按訂房資料辦理退房，先向酒店確認能否寄存行李。若不能寄存，可考慮 11:00 開門的日本橋綜合案內所（<span lang="ja">日本橋総合案内所</span>），使用前先確認櫃位及收費。</p>
+            <a href="https://www.nippombashi.jp/annaijyo.php" target="_blank" rel="noopener noreferrer">日本橋綜合案內所</a>
+          </div>
+        </li>
+        <li data-map-point="day-6:1" data-food-area="kuromon">
+          <div class="stop-marker"><span>02</span></div>
+          <div class="stop-content">
+            <p class="stop-time">10:00</p>
+            <h3>黑門市場<span class="ja" lang="ja">黒門市場</span></h3>
+            <p>在市場食早餐或小食，可逛海產及熟食店。各店舖開門時間不同。</p>
+            <p class="stop-address" lang="ja">大阪市中央区日本橋2-4-1</p><a href="https://osaka-info.jp/experience/ja/osaka/spot/208" target="_blank" rel="noopener noreferrer">市場資料</a>
+          </div>
+        </li>
+        <li data-map-point="day-6:2" data-food-area="nipponbashi">
+          <div class="stop-marker"><span>03</span></div>
+          <div class="stop-content">
+            <p class="stop-time">11:00–13:30</p>
+            <h3>日本橋電電城及午餐<span class="ja" lang="ja">日本橋でんでんタウン・オタロード</span></h3>
+            <p>想買動漫周邊可去 Animate 大阪日本橋，平日 11:00 開門；想睇高達或鐵道模型可去 Joshin Super Kids Land 本店，10:00 開門。午餐後若時間充裕，可順路去難波八阪神社睇獅子殿，再返酒店。</p>
+            <a href="https://www.animate.co.jp/shop/nipponbashi/" target="_blank" rel="noopener noreferrer">Animate 大阪日本橋店</a> · <a href="https://store.joshin.co.jp/detail/1746/" target="_blank" rel="noopener noreferrer">Joshin 模型店</a>
+          </div>
+        </li>
+        <li data-map-point="airport-back:1" data-food-area="nankai">
+          <div class="stop-marker"><span>04</span></div>
+          <div class="stop-content">
+            <p class="stop-time">14:30</p>
+            <h3>取行李並前往南海難波站<span class="ja" lang="ja">南海なんば駅</span></h3>
+            <ul class="rail-legs" role="list" aria-label="鐵路乘車指示">
+              <li class="rail-leg rail-nankai-main">
+                <div class="rail-leg-header"><span class="rail-line-name rail-nankai-main">南海本線 <span class="rail-line-code">藍色</span></span> <span class="rail-line-name rail-nankai-airport">南海空港線 <span class="rail-line-code">紫色</span></span> <strong class="rail-direction">往 <span lang="ja">関西空港</span></strong></div>
+                <p class="rail-journey"><span class="rail-station"><span lang="ja">なんば</span> <span class="rail-station-code">NK01</span></span> → <span class="rail-station"><span lang="ja">関西空港</span> <span class="rail-station-code">NK32</span></span> <span class="rail-ride-detail">· <span lang="ja">空港急行</span></span></p>
+              </li>
+            </ul>
+            <p>預計 15:20–15:30 到南海難波站。按現行平日時間表，建議搭 <strong>15:38 空港急行，16:22 到關西空港站</strong>。15:38 班次預定從 6 號月台開出，後備班次為 15:53 → 16:38。站內跟「<span lang="ja">南海線・空港線</span>」指示，並以當日電子牌為準。</p>
+            <a href="https://kensaku.nankai.co.jp/sp/T5?USR=PC&amp;d=1&amp;dw=0&amp;slCode=306-0" target="_blank" rel="noopener noreferrer">南海平日時間表</a>
+          </div>
+        </li>
+        <li data-map-point="airport-back:2" data-food-area="kix">
+          <div class="stop-marker"><span>05</span></div>
+          <div class="stop-content">
+            <p class="stop-time">目標 16:30–17:00 到客運大樓</p>
+            <h3>關西機場及約 20:00 航班<span class="ja" lang="ja">関西国際空港</span></h3>
+            <p>按約 20:00 由 KIX 乘搭國際航班安排。先按機票確認客運大樓。一號客運大樓國際線報到在 4 樓；二號客運大樓要在 Aeroplaza 轉免費穿梭巴士，另計候車時間。</p>
+            <a href="https://www.kansai-airport.or.jp/flight/airlines" target="_blank" rel="noopener noreferrer">航空公司及客運大樓</a> · <a href="https://www.kansai-airport.or.jp/access/to-airport/bus" target="_blank" rel="noopener noreferrer">客運大樓穿梭巴士</a>
+          </div>
+        </li>
+        </ol>
+      <section class="day-dining-guide" aria-label="日本橋及難波順路景點">
+        <h3>日本橋及難波順路景點</h3>
+        <ul class="meal-options">
+          <li><h4>動漫周邊</h4><p lang="ja">アニメイト大阪日本橋</p><p class="meal-address" lang="ja">大阪市浪速区日本橋西1-1-3 池田ビル２号館1F・2F</p><p>平日 11:00 開門，可集中逛動漫精品。</p><a href="https://www.animate.co.jp/shop/nipponbashi/" target="_blank" rel="noopener noreferrer">店舖資料</a></li>
+          <li><h4>高達及模型</h4><p lang="ja">スーパーキッズランド本店</p><p class="meal-address" lang="ja">大阪市浪速区日本橋4-12-4</p><p>10:00 開門，想睇高達或鐵道模型可先去呢間。</p><a href="https://store.joshin.co.jp/detail/1746/" target="_blank" rel="noopener noreferrer">店舖資料</a></li>
+          <li><h4>獅子殿</h4><p lang="ja">難波八阪神社</p><p class="meal-address" lang="ja">大阪市浪速区元町2-9-19</p><p>如有時間，可在返酒店前順路拍照。</p><a href="https://nambayasaka.jp/?page_id=19" target="_blank" rel="noopener noreferrer">神社資料</a></li>
+        </ul>
+      </section>
+      </section>
+    </div>
+
+    <section id="explore" class="explore app-screen" data-trip-view="map" data-map-context="shops" aria-labelledby="explore-title">
+      <div class="section-heading">
+        <div>
+          <h1 id="explore-title" tabindex="-1">旅程地圖</h1>
+          <p>查看每日路線及嵐酒店約 800 米內的店舖。</p>
+        </div>
+        <div class="origin">
+          <label for="origin-select">出發點</label>
+          <div class="station-field">
+            <svg class="icon" id="origin-field-icon" aria-hidden="true"><use href="#i-hotel"/></svg>
+            <select id="origin-select">
+              <option value="hotel-arashi">嵐酒店 No.001 / 嵐ホテル 難波店</option>
+            </select>
+            <svg class="icon chevron"><use href="#i-down"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="route-toolbar">
+        <div id="route-picker">
+          <label for="route-select">地圖顯示</label>
+          <select id="route-select">
+            <option value="none">附近店舖</option>
+            <optgroup label="每日行程">
+              <option value="day-1">Day 1 心齋橋及道頓堀</option>
+              <option value="day-2">Day 2 大阪城及天滿</option>
+              <option value="day-3">Day 3 梅田</option>
+              <option value="day-4">Day 4 京都東山</option>
+              <option value="day-5">Day 5 伏見稻荷及宇治</option>
+              <option value="day-6">Day 6 日本橋</option>
+            </optgroup>
+            <optgroup label="機場接駁">
+              <option value="airport">Day 1 由機場到酒店</option>
+              <option value="airport-back">Day 6 由酒店去機場</option>
+            </optgroup>
+          </select>
+        </div>
+        <button id="route-fit" type="button" hidden><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg>顯示全程</button>
+      </div>
+      <div id="route-legend" class="route-legend" hidden>
+        <div class="route-line-key" aria-label="行程線條圖例"><span class="route-key-walk">步行</span><span class="route-key-estimated">步行示意</span><span class="route-key-bus">巴士示意</span></div>
+        <div id="rail-map-key" class="route-line-key rail-map-key" aria-label="鐵路路線圖例" hidden></div>
+        <p id="route-note" role="status"></p>
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>
+        <a href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener noreferrer">回報地圖資料</a>
+      </div>
+
+      <div class="toolbar">
+        <div id="category-filters" class="filters" role="group" aria-label="地點類別">
+          <button class="filter-pill" type="button" data-category="all" aria-pressed="true"><svg class="icon"><use href="#i-layers"/></svg><span>全部</span><span data-count></span></button>
+          <button class="filter-pill" type="button" data-category="restaurant" aria-pressed="false"><svg class="icon"><use href="#i-food"/></svg><span>餐廳</span><span data-count></span></button>
+          <button class="filter-pill" type="button" data-category="convenience" aria-pressed="false"><svg class="icon"><use href="#i-shop"/></svg><span>便利店</span><span data-count></span></button>
+          <button class="filter-pill" type="button" data-category="supermarket" aria-pressed="false"><svg class="icon"><use href="#i-basket"/></svg><span>超市</span><span data-count></span></button>
+          <button class="filter-pill" type="button" data-category="shopping" aria-pressed="false"><svg class="icon"><use href="#i-bag"/></svg><span>購物</span><span data-count></span></button>
+        </div>
+        <div class="shop-search-tools">
+          <button id="favorites-filter" class="favorites-filter" type="button" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg><span>收藏</span><span data-count></span></button>
+          <div class="search-field">
+          <svg class="icon"><use href="#i-search"/></svg>
+          <input id="place-search" type="search" aria-label="搜尋店名、類別或地址" placeholder="搜尋店舖" autocomplete="off">
+          <button id="clear-search" class="icon-button" type="button" aria-label="清除搜尋" hidden><svg class="icon"><use href="#i-close"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="search-feedback" class="search-feedback" hidden>
+        <span id="search-feedback-text" role="status" aria-live="polite"></span>
+        <button id="view-search-results" type="button">查看清單 <span aria-hidden="true">↓</span></button>
+      </div>
+
+      <div id="food-filters" class="food-filters" role="group" aria-label="餐廳類型" hidden>
+        <button class="food-pill" type="button" data-food-style="all" aria-pressed="true"><span>全部餐廳</span><span data-count></span></button>
+        <button class="food-pill" type="button" data-food-style="teppanyaki" aria-pressed="false"><span>鐵板燒</span><span data-count></span></button>
+        <button class="food-pill" type="button" data-food-style="izakaya" aria-pressed="false"><span>居酒屋</span><span data-count></span></button>
+        <button class="food-pill" type="button" data-food-style="sushi" aria-pressed="false"><span>壽司</span><span data-count></span></button>
+        <button class="food-pill" type="button" data-food-style="breakfast" aria-pressed="false"><span>早餐</span><span data-count></span></button>
+      </div>
+
+      <div class="explore-grid">
+        <div class="map-panel">
+          <div id="map" role="region" aria-label="大阪旅程互動地圖"></div>
+          <div id="basemap-switch" class="basemap-switch" role="group" aria-label="底圖樣式">
+            <button type="button" data-basemap="simple" aria-pressed="true">簡明</button>
+            <button type="button" data-basemap="detail" aria-pressed="false">詳細</button>
+            <button type="button" data-basemap="google" aria-pressed="false">Google 地圖</button>
+          </div>
+          <div id="google-map-view" hidden>
+            <iframe id="google-map-frame" title="嵐酒店附近的 Google 地圖" data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3281.514988584544!2d135.4976302!3d34.6669498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000e789351ccf99%3A0x8e663c1ba9a743ca!2sArashi%20Hotel%20Namba!5e0!3m2!1sen!2ssg!4v1795533504045!5m2!1sen!2ssg" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <div class="google-map-caption">
+              <span>在店舖詳情選擇「在地圖上定位」，即可查看本站的地圖標記。</span>
+              <a href="https://www.google.com/maps/search/?api=1&amp;query=Arashi+Hotel+Namba+1-1-1+Motomachi+Osaka" target="_blank" rel="noopener noreferrer">在 Google 地圖開啟</a>
+            </div>
+          </div>
+          <div class="map-controls" role="group" aria-label="地圖控制">
+            <div class="zoom-controls">
+              <button id="zoom-in" type="button" aria-label="放大地圖" title="放大地圖"><svg class="icon"><use href="#i-plus"/></svg></button>
+              <button id="zoom-out" type="button" aria-label="縮小地圖" title="縮小地圖"><svg class="icon"><use href="#i-minus"/></svg></button>
+            </div>
+            <button id="map-reset" type="button" aria-label="重設地圖範圍" title="重設地圖範圍"><svg class="icon"><use href="#i-target"/></svg></button>
+          </div>
+          <p id="map-error" role="status" hidden>底圖暫時無法載入，仍可在地點列表開啟步行路線。</p>
+          <ul class="map-legend" aria-label="地圖圖例">
+            <li><span class="legend-dot legend-hotel"></span><span>酒店</span></li>
+            <li><span class="legend-dot legend-station"></span><span>車站</span></li>
+            <li><span class="legend-dot legend-restaurant"></span><span>餐廳</span></li>
+            <li><span class="legend-dot legend-convenience"></span><span>便利店</span></li>
+            <li><span class="legend-dot legend-supermarket"></span><span>超市</span></li>
+            <li><span class="legend-dot legend-shopping"></span><span>購物</span></li>
+          </ul>
+          <noscript><p class="map-fallback">請啟用 JavaScript 後使用互動地圖及地點列表。</p></noscript>
+        </div>
+
+        <aside class="results" aria-labelledby="results-title">
+          <header class="results-header">
+            <div>
+              <h3 id="results-title" tabindex="-1">附近地點</h3>
+              <p id="results-count" aria-live="polite"></p>
+            </div>
+            <span class="sort-note">按距離排列</span>
+          </header>
+          <ul id="places-list" aria-label="附近地點搜尋結果"></ul>
+          <div class="result-origin">
+            <span class="result-origin-label">
+              <svg class="icon" id="current-origin-icon" aria-hidden="true"><use href="#i-hotel"/></svg>
+              <span>
+                <span id="current-origin">Hotel Arashi Namba No.001</span>
+                <span id="current-origin-ja" class="ja" lang="ja">嵐ホテル 難波店 No.001</span>
+                <span id="current-origin-address" lang="ja" hidden></span>
+              </span>
+            </span>
+            <a id="origin-source" href="https://www.city.osaka.lg.jp/kenko/cmsfiles/contents/0000382/382418/20260731ryokan.pdf" target="_blank" rel="noopener noreferrer">地址來源</a>
+          </div>
+        </aside>
+      </div>
+      <p class="map-note"><svg class="icon"><use href="#i-info"/></svg><span>所示為出發點至店舖或所在大廈的約略直線距離。步行路線、入口及營業時間請參考地圖及店舖資料。</span></p>
+    </section>
+
+
+    <section id="trip-food" class="app-screen" data-trip-view="food" aria-labelledby="food-directory-title" hidden>
+      <div class="section-heading"><h1 id="food-directory-title" tabindex="-1">食店</h1></div>
+      <div class="food-directory-filters" role="group" aria-label="食店篩選">
+        <label for="food-directory-day">行程日<select id="food-directory-day"></select></label>
+        <label for="food-directory-stop">附近站點<select id="food-directory-stop"></select></label>
+        <label for="food-directory-type">食物類型<select id="food-directory-type"></select></label>
+      </div>
+      <div class="food-directory-toolbar">
+        <p id="food-directory-status" role="status"></p>
+        <label class="food-directory-sort" for="food-directory-sort">
+          排序
+          <select id="food-directory-sort">
+            <option value="">行程建議</option>
+            <option value="googleRating">Google 高分優先</option>
+            <option value="tabelogRating">食べログ高分優先</option>
+          </select>
+        </label>
+      </div>
+      <ul id="food-directory-results" class="meal-options" role="list"></ul>
+    </section>
+
+    <section id="trip-shopping" class="app-screen" data-trip-view="shopping" aria-labelledby="shopping-title" hidden>
+      <div class="section-heading"><h1 id="shopping-title" tabindex="-1">購物</h1></div>
+      <section id="shopping-checklist" aria-labelledby="shopping-checklist-title"></section>
+      <div class="shopping-filters" role="group" aria-label="購物篩選">
+        <label for="shopping-day">行程日<select id="shopping-day"></select></label>
+        <label for="shopping-category">購物類型<select id="shopping-category"></select></label>
+      </div>
+      <p id="shopping-status" role="status"></p>
+      <ul id="shopping-results" class="meal-options" role="list"></ul>
+    </section>
+
+    <section id="trip-hotel" class="app-screen hotel-screen" data-trip-view="hotel" aria-labelledby="hotel-title">
+      <div class="hotel-card">
+        <span class="hotel-icon"><svg class="icon" aria-hidden="true"><use href="#i-hotel"/></svg></span>
+        <h1 id="hotel-title" tabindex="-1">嵐酒店 難波 No.001</h1>
+        <p id="hotel-japanese" lang="ja">嵐ホテル 難波店 No.001</p>
+        <p class="hotel-address-box"><span>日文地址</span><strong id="hotel-address" lang="ja">大阪市浪速区元町1-1-1</strong></p>
+        <div class="hotel-actions">
+          <button id="copy-hotel" class="route-link" type="button"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>複製日文資料</button>
+          <a class="route-link route-link-secondary" href="https://www.google.com/maps/search/?api=1&amp;query=Arashi+Hotel+Namba+1-1-1+Motomachi+Osaka" target="_blank" rel="noopener noreferrer">在 Google 地圖查看</a>
+        </div>
+        <p id="hotel-copy-status" role="status"></p>
+      </div>
+      <div class="hotel-access">
+        <h2>點樣去酒店</h2>
+        <p>由南海難波站出閘後，站外步行約 6 分鐘，請另預留出站時間。</p>
+        <div class="hotel-access-links">
+          <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E5%8D%97%E6%B5%B7%E3%81%AA%E3%82%93%E3%81%B0%E9%A7%85+%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E9%9B%A3%E6%B3%A25-1-60&amp;destination=Hotel+Arashi+Namba+No.001+%E5%A4%A7%E9%98%AA%E5%B8%82%E6%B5%AA%E9%80%9F%E5%8C%BA%E5%85%83%E7%94%BA1-1-1&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">由南海難波站行去酒店</a>
+          <a href="#explore" data-show-route="airport">查看機場接駁路線</a>
+        </div>
+      </div>
+      <details id="mobile-app-help" class="mobile-app-help">
+      <summary>加入手機主畫面</summary>
+      <p>用手機開啟 HTTPS 網址後，iPhone 可在 Safari 分享選單選「加入主畫面」，再開啟「以 Web App 開啟」。Android 可在 Chrome 選單選「安裝並建立捷徑」。</p>
+      <p>請先上網開啟一次。完成離線儲存後，可查看行程、食店、購物資料及難波簡明地圖。詳細底圖、Google 地圖、食評及步行導航須連接網絡。</p>
+      <p>已選餐廳及購物清單儲喺目前使用嘅 App 或瀏覽器。請用同一個 App 圖示或瀏覽器重開。</p>
+      <p id="offline-ready" role="status" hidden>行程、食店、購物資料及簡明地圖已儲存，可離線查看。</p>
+    </details>
+    </section>
+  </main>
+
+  <nav class="trip-nav" aria-label="旅程快捷列">
+    <a href="#itinerary" data-view-link="itinerary"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span>行程</span></a>
+    <a href="#explore" data-view-link="map"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>地圖</span></a>
+    <a href="#trip-food" data-view-link="food"><svg class="icon" aria-hidden="true"><use href="#i-food"/></svg><span>食店</span></a>
+    <a href="#trip-shopping" data-view-link="shopping"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg><span>購物</span></a>
+    <a href="#trip-hotel" data-view-link="hotel"><svg class="icon" aria-hidden="true"><use href="#i-hotel"/></svg><span>酒店</span></a>
+  </nav>
+
+  <dialog id="place-detail" aria-label="地點詳情">
+    <button class="icon-button detail-close" type="button" aria-label="關閉地點詳情" data-close-detail><svg class="icon"><use href="#i-close"/></svg></button>
+    <div id="place-detail-content"></div>
+  </dialog>
+  <script>
+    if (window.isSecureContext && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => navigator.serviceWorker.ready)
+        .then(() => { document.getElementById('offline-ready').hidden = false; })
+        .catch(error => console.warn('離線儲存暫時無法使用。', error));
+    }
+  </script>
+</body>
+</html>
