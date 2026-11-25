@@ -1,6 +1,6 @@
 /* Cache only this app's bundled, same-origin resources. */
 const CACHE_PREFIX = 'namba-walk-shell-';
-const CACHE_NAME = `${CACHE_PREFIX}v23`;
+const CACHE_NAME = `${CACHE_PREFIX}v24`;
 const ROOT = new URL('./', self.registration.scope);
 const ASSET_PATHS = [
   'index.html', 'style.css', 'app.js', 'storage.js', 'trip-ui.js', 'places.js', 'basemap.js', 'routes.js',
